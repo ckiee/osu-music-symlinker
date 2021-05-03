@@ -17,6 +17,21 @@ Run it:
 $ ./target/release/osu-music-symlinker ~/Games/osu/drive_c/osu/Songs ~/Music
 ```
 
+## Oh my gosh, why didn't you just write this in shell script?
+
+I did. It was slow and unreadable:
+
+``` irc-log
+[15:36:27] <ronthecookie> for x in *; do ln -s $(pwd)/"$x"/$(cat "$x/"*.osu | grep AudioFilename | uniq | cut -d: -f 2 | sed -e 's/^ //') "/home/ron/Music/$(echo -en $x | sed -e 's/ /_/g')"; done
+[15:36:43] <ronthecookie> it doesnt even work... yet...
+[15:45:19] <ronthecookie> i have some rogue \r's in that
+[15:45:51] <ronthecookie> oh did i mention these files im parsing are crlf? fun!
+[15:47:44] <ronthecookie> im gonna just sed them out before i grep
+[15:53:37] <ronthecookie> finally got it working: for x in *; do ln -s "$(pwd)/$x/$(cat "$x/"*.osu | sed -e 's/[\r\n]//g' | grep 'AudioFilename' | head -n1 | cut -d: -f 2 | sed -e 's/^ //')" "/home/ron/Music/$x.mp3"; done
+```
+
+(Some messages cut off for anonymity)
+
 ## License
 Copyright (C) 2021 Ron B
 
